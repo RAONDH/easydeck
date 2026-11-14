@@ -212,28 +212,41 @@ final class DeckController: NSObject, NSWindowDelegate {
 
     // MARK: 배치 바꾸기 (한 줄 / 세로 한 줄 / 가로↔세로)
 
-    private var layoutUndo: [String: Page] = [:]
+    /// 되돌리기용: 바꾸기 전 모든 페이지의 배치(칸 수·위치·크기)
+    private var layoutUndo: [Page]?
 
+    /// 모든 페이지에 같은 배치 변환을 적용 (페이지를 넘겨도 같은 모양 유지)
     func changeLayout(_ arg: String) {
         let store = Store.shared
-        let cur = store.page
-        let new: Page
+        let transform: (Page) -> Page
         switch arg.lowercased() {
-        case "row", "한줄", "가로한줄": new = cur.asSingleRow()
-        case "column", "col", "세로한줄": new = cur.asSingleColumn()
-        case "flip", "rotate", "뒤집기": new = cur.transposed()
+        case "row", "한줄", "가로한줄": transform = { $0.asSingleRow() }
+        case "column", "col", "세로한줄": transform = { $0.asSingleColumn() }
+        case "flip", "rotate", "뒤집기": transform = { $0.transposed() }
         case "undo", "되돌리기":
-            guard let old = layoutUndo[cur.id] else { Toast.show("되돌릴 배치가 없어요"); return }
-            layoutUndo[cur.id] = nil
-            store.mutate { $0.pages[$0.currentPage] = old }
-            Toast.show("이전 배치로 되돌렸어요")
+            guard let old = layoutUndo else { Toast.show("되돌릴 배치가 없어요"); return }
+            layoutUndo = nil
+            store.mutate { p in
+                for i in p.pages.indices {
+                    guard let o = old.first(where: { $0.id == p.pages[i].id }) else { continue }
+                    p.pages[i].cols = o.cols; p.pages[i].rows = o.rows
+                    for j in p.pages[i].widgets.indices {
+                        guard let ow = o.widgets.first(where: { $0.id == p.pages[i].widgets[j].id }) else { continue }
+                        p.pages[i].widgets[j].x = ow.x; p.pages[i].widgets[j].y = ow.y
+                        p.pages[i].widgets[j].w = ow.w; p.pages[i].widgets[j].h = ow.h
+                        p.pages[i].widgets[j].vertical = ow.vertical
+                    }
+                }
+            }
+            Toast.show("모든 페이지를 이전 배치로 되돌렸어요")
             return
         default:
             Toast.show("layout row|column|flip|undo"); return
         }
-        layoutUndo[cur.id] = cur
-        store.mutate { $0.pages[$0.currentPage] = new }
-        Toast.show("\(new.cols)×\(new.rows) 배치로 바꿨어요 · 메뉴 › 배치 › 되돌리기")
+        layoutUndo = store.profile.pages
+        store.mutate { p in p.pages = p.pages.map(transform) }
+        let cur = store.page
+        Toast.show("모든 페이지를 바꿨어요 (\(cur.cols)×\(cur.rows)) · 메뉴 › 배치 바꾸기 › 되돌리기")
     }
 
     func goToPage(_ idx: Int, manual: Bool) {

@@ -420,10 +420,10 @@ struct SettingsView: View {
                     Stepper("세로 \(m.p.pages[m.selected].rows)칸", value: $m.p.pages[m.selected].rows, in: 1...12)
                     Text("칸을 줄여 밖으로 나가는 위젯은 적용할 때 안쪽으로 옮겨집니다.").font(.caption).foregroundColor(.secondary)
                     HStack {
-                        Text("배치")
-                        Button("가로 한 줄") { m.p.pages[m.selected] = m.p.pages[m.selected].asSingleRow() }
-                        Button("세로 한 줄") { m.p.pages[m.selected] = m.p.pages[m.selected].asSingleColumn() }
-                        Button("가로↔세로") { m.p.pages[m.selected] = m.p.pages[m.selected].transposed() }
+                        Text("배치 (모든 페이지)")
+                        Button("가로 한 줄") { m.p.pages = m.p.pages.map { $0.asSingleRow() } }
+                        Button("세로 한 줄") { m.p.pages = m.p.pages.map { $0.asSingleColumn() } }
+                        Button("가로↔세로") { m.p.pages = m.p.pages.map { $0.transposed() } }
                     }
                     Section("이 앱이 앞에 오면 자동으로 이 페이지로") {
                         ForEach(m.p.pages[m.selected].apps, id: \.self) { bid in
@@ -635,7 +635,7 @@ enum HelpText {
     # 으로 시작하는 줄은 주석
 
     ■ 배치 바꾸기 (≡ 메뉴 › 배치 바꾸기, 또는 설정 › 페이지)
-    • 가로 한 줄 / 세로 한 줄 / 가로↔세로 바꾸기, 바로 되돌리기 가능
+    • 가로 한 줄 / 세로 한 줄 / 가로↔세로 바꾸기 — 모든 페이지에 함께 적용, 바로 되돌리기 가능
     • 상단 ⚙︎ 톱니바퀴 = 설정 창
 
     ■ 페이지
