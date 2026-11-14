@@ -48,7 +48,17 @@ if [ -f Tools/make_icon.swift ]; then
     iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/AppIcon.icns" || true
 fi
 
-codesign --force --deep --sign - "$APP"
+# 서명: 'EasyDeck Local Signing' 인증서가 있으면 사용 → 다시 빌드해도 손쉬운 사용 권한 유지
+#        없으면 임시(ad-hoc) 서명 → 빌드할 때마다 권한을 다시 등록해야 함
+#        인증서 만들기: ./Tools/make_signing_cert.sh
+SIGN_ID=$(security find-identity -p codesigning 2>/dev/null | awk '/"EasyDeck Local Signing"/ {print $2; exit}')
+if [ -n "$SIGN_ID" ]; then
+  codesign --force --sign "$SIGN_ID" --identifier org.easypastor.easydeck "$APP"
+  echo "🔏 고정 서명 사용 (EasyDeck Local Signing)"
+else
+  codesign --force --sign - "$APP"
+  echo "⚠️  임시 서명 사용 – 다시 빌드하면 손쉬운 사용 권한을 다시 등록해야 합니다"
+fi
 echo "✅ 빌드 완료: $APP"
 
 if [ "$1" = "install" ]; then
