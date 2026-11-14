@@ -539,8 +539,11 @@ func confirmRiskyImport(_ p: Profile) -> Bool {
                     if line.isEmpty || line.hasPrefix("#") { continue }
                     switch ActionRunner.risk(of: ActionRunner.split(line).0) {
                     case .safe: break
-                    case .runsCode: danger.append("\(name)\n    ⚠️ \(clean(line))")
-                    case .input: other.append("\(name)\n    \(clean(line))")
+                    // 명령·입력 동작은 자르지 않고 전체를 보여줌 (공백 연속은 하나로)
+                    case .runsCode, .input:
+                        let full = clean(line.split(whereSeparator: { $0 == " " || $0 == "\t" }).joined(separator: " "),
+                                         max: Int.max)
+                        danger.append("\(name)\n    ⚠️ \(full)")
                     }
                 }
             }
@@ -549,13 +552,13 @@ func confirmRiskyImport(_ p: Profile) -> Bool {
     if danger.isEmpty && other.isEmpty { return true }
 
     var text = ""
-    if !danger.isEmpty { text += "■ 명령을 실행하는 동작 (\(danger.count)개)\n" + danger.joined(separator: "\n") + "\n\n" }
-    if !other.isEmpty { text += "■ 키 입력·앱 열기·단축키 (\(other.count)개)\n" + other.joined(separator: "\n") }
+    if !danger.isEmpty { text += "■ 명령 실행·키 입력·열기 동작 (\(danger.count)개, 전체 표시)\n" + danger.joined(separator: "\n") + "\n\n" }
+    if !other.isEmpty { text += "■ 전역 단축키 (\(other.count)개)\n" + other.joined(separator: "\n") }
 
     let a = NSAlert()
     a.alertStyle = .warning
-    a.messageText = danger.isEmpty ? "이 프로필에는 키 입력·앱 열기 동작이 들어 있습니다"
-                                   : "이 프로필에는 명령을 실행하는 동작이 들어 있습니다"
+    a.messageText = danger.isEmpty ? "이 프로필에는 전역 단축키가 들어 있습니다"
+                                   : "이 프로필에는 명령 실행·키 입력 동작이 들어 있습니다"
     a.informativeText = "믿을 수 있는 사람이 준 파일만 가져오세요. 셸·애플스크립트 명령과 키 입력 동작은 컴퓨터의 파일을 바꾸거나 지울 수 있습니다. 아래 목록을 모두 확인하세요."
     let scroll = NSScrollView(frame: NSRect(x: 0, y: 0, width: 460, height: 240))
     scroll.hasVerticalScroller = true

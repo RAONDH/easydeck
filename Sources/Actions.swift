@@ -75,7 +75,7 @@ enum ActionRunner {
 
     enum Risk { case safe, input, runsCode }
 
-    /// 가져온 프로필 검사용 분류. 여기 안전 목록에 없는 동작은 모두 위험으로 봄 (exec()와 함께 관리)
+    /// 가져온 프로필 검사용 분류. .input(키 입력·열기)도 명령 실행에 쓰일 수 있어 경고 화면에서는 위험으로 함께 표시. 여기 안전 목록에 없는 동작은 모두 위험으로 봄 (exec()와 함께 관리)
     static func risk(of cmd: String) -> Risk {
         switch cmd.lowercased() {
         case "volume", "vol", "media", "brightness", "bright", "darkmode", "dark", "delay", "wait", "sleep",
