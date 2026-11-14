@@ -508,6 +508,7 @@ struct SettingsView: View {
         guard o.runModal() == .OK, let url = o.url, let data = try? Data(contentsOf: url) else { return }
         do {
             let p = try JSONDecoder().decode(Profile.self, from: data)
+            guard confirmRiskyImport(p) else { return }
             Store.shared.backup(suffix: "before-import")
             Store.shared.replaceProfile(p)
             m.p = p
@@ -515,6 +516,35 @@ struct SettingsView: View {
             NSAlert(error: error).runModal()
         }
     }
+}
+
+/// 다른 사람이 준 프로필에는 명령 실행 동작이 들어 있을 수 있으므로 가져오기 전에 보여주고 확인
+func confirmRiskyImport(_ p: Profile) -> Bool {
+    let risky = ["shell", "sh", "run", "applescript", "osascript", "shortcut", "shortcuts", "open"]
+    var lines: [String] = []
+    for page in p.pages {
+        for w in page.widgets {
+            let name = "[\(page.name)] \(w.label.isEmpty ? w.kind.title : w.label)"
+            if !w.hotkey.isEmpty { lines.append("\(name) · 전역 단축키 \(Keys.pretty(w.hotkey))") }
+            for (_, script) in w.actions.sorted(by: { $0.key < $1.key }) {
+                for raw in script.components(separatedBy: .newlines) {
+                    let line = raw.trimmingCharacters(in: .whitespaces)
+                    let cmd = ActionRunner.split(line).0.lowercased()
+                    if risky.contains(cmd) { lines.append("\(name) · \(line)") }
+                }
+            }
+        }
+    }
+    if !p.settings.hotkey.isEmpty { lines.append("덱 보이기/숨기기 단축키 \(Keys.pretty(p.settings.hotkey))") }
+    guard lines.count > (p.settings.hotkey.isEmpty ? 0 : 1) else { return true }
+    let a = NSAlert()
+    a.alertStyle = .warning
+    a.messageText = "이 프로필에는 명령을 실행하는 동작이 들어 있습니다"
+    let shown = lines.prefix(25).joined(separator: "\n") + (lines.count > 25 ? "\n… 외 \(lines.count - 25)개" : "")
+    a.informativeText = "믿을 수 있는 사람이 준 파일만 가져오세요. 셸·애플스크립트 명령은 컴퓨터의 파일을 바꾸거나 지울 수 있습니다.\n\n" + shown
+    a.addButton(withTitle: "취소")
+    a.addButton(withTitle: "가져오기")
+    return a.runModal() == .alertSecondButtonReturn
 }
 
 // MARK: - 로그인 시 실행
