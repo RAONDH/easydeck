@@ -518,30 +518,55 @@ struct SettingsView: View {
     }
 }
 
-/// 다른 사람이 준 프로필에는 명령 실행 동작이 들어 있을 수 있으므로 가져오기 전에 보여주고 확인
+/// 다른 사람이 준 프로필에는 명령 실행 동작이 들어 있을 수 있으므로 가져오기 전에 모두 보여주고 확인
 func confirmRiskyImport(_ p: Profile) -> Bool {
-    let risky = ["shell", "sh", "run", "applescript", "osascript", "shortcut", "shortcuts", "open"]
-    var lines: [String] = []
+    // 표시용 정리: 제어문자·방향전환·폭 없는 문자를 지우고 길이 제한
+    func clean(_ s: String, max: Int = 160) -> String {
+        let t = String(s.unicodeScalars.filter { u in
+            !(CharacterSet.controlCharacters.contains(u) || (0x200B...0x200F).contains(u.value)
+              || (0x202A...0x202E).contains(u.value) || (0x2066...0x2069).contains(u.value) || u.value == 0xFEFF)
+        }.map(Character.init))
+        return t.count > max ? String(t.prefix(max)) + "…" : t
+    }
+    var danger: [String] = [], other: [String] = []
     for page in p.pages {
         for w in page.widgets {
-            let name = "[\(page.name)] \(w.label.isEmpty ? w.kind.title : w.label)"
-            if !w.hotkey.isEmpty { lines.append("\(name) · 전역 단축키 \(Keys.pretty(w.hotkey))") }
+            let name = "[\(clean(page.name, max: 30))] \(clean(w.label.isEmpty ? w.kind.title : w.label, max: 30))"
+            if !w.hotkey.isEmpty { other.append("\(name) — 전역 단축키 \(clean(Keys.pretty(w.hotkey), max: 30))") }
             for (_, script) in w.actions.sorted(by: { $0.key < $1.key }) {
                 for raw in script.components(separatedBy: .newlines) {
                     let line = raw.trimmingCharacters(in: .whitespaces)
-                    let cmd = ActionRunner.split(line).0.lowercased()
-                    if risky.contains(cmd) { lines.append("\(name) · \(line)") }
+                    if line.isEmpty || line.hasPrefix("#") { continue }
+                    switch ActionRunner.risk(of: ActionRunner.split(line).0) {
+                    case .safe: break
+                    case .runsCode: danger.append("\(name)\n    ⚠️ \(clean(line))")
+                    case .input: other.append("\(name)\n    \(clean(line))")
+                    }
                 }
             }
         }
     }
-    if !p.settings.hotkey.isEmpty { lines.append("덱 보이기/숨기기 단축키 \(Keys.pretty(p.settings.hotkey))") }
-    guard lines.count > (p.settings.hotkey.isEmpty ? 0 : 1) else { return true }
+    if danger.isEmpty && other.isEmpty { return true }
+
+    var text = ""
+    if !danger.isEmpty { text += "■ 명령을 실행하는 동작 (\(danger.count)개)\n" + danger.joined(separator: "\n") + "\n\n" }
+    if !other.isEmpty { text += "■ 키 입력·앱 열기·단축키 (\(other.count)개)\n" + other.joined(separator: "\n") }
+
     let a = NSAlert()
     a.alertStyle = .warning
-    a.messageText = "이 프로필에는 명령을 실행하는 동작이 들어 있습니다"
-    let shown = lines.prefix(25).joined(separator: "\n") + (lines.count > 25 ? "\n… 외 \(lines.count - 25)개" : "")
-    a.informativeText = "믿을 수 있는 사람이 준 파일만 가져오세요. 셸·애플스크립트 명령은 컴퓨터의 파일을 바꾸거나 지울 수 있습니다.\n\n" + shown
+    a.messageText = danger.isEmpty ? "이 프로필에는 키 입력·앱 열기 동작이 들어 있습니다"
+                                   : "이 프로필에는 명령을 실행하는 동작이 들어 있습니다"
+    a.informativeText = "믿을 수 있는 사람이 준 파일만 가져오세요. 셸·애플스크립트 명령과 키 입력 동작은 컴퓨터의 파일을 바꾸거나 지울 수 있습니다. 아래 목록을 모두 확인하세요."
+    let scroll = NSScrollView(frame: NSRect(x: 0, y: 0, width: 460, height: 240))
+    scroll.hasVerticalScroller = true
+    scroll.borderType = .bezelBorder
+    let tv = NSTextView(frame: scroll.bounds)
+    tv.isEditable = false
+    tv.font = .monospacedSystemFont(ofSize: 11, weight: .regular)
+    tv.string = text
+    tv.autoresizingMask = [.width]
+    scroll.documentView = tv
+    a.accessoryView = scroll
     a.addButton(withTitle: "취소")
     a.addButton(withTitle: "가져오기")
     return a.runModal() == .alertSecondButtonReturn

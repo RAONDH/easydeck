@@ -73,6 +73,21 @@ enum ActionRunner {
         }
     }
 
+    enum Risk { case safe, input, runsCode }
+
+    /// 가져온 프로필 검사용 분류. 여기 안전 목록에 없는 동작은 모두 위험으로 봄 (exec()와 함께 관리)
+    static func risk(of cmd: String) -> Risk {
+        switch cmd.lowercased() {
+        case "volume", "vol", "media", "brightness", "bright", "darkmode", "dark", "delay", "wait", "sleep",
+             "page", "layout", "notify", "toast", "sound", "deck":
+            return .safe
+        case "key", "hotkey", "type", "text", "paste", "open":
+            return .input
+        default:
+            return .runsCode   // shell, applescript, shortcut, 알 수 없는 동작
+        }
+    }
+
     static func split(_ line: String) -> (String, String) {
         if let r = line.firstIndex(where: { $0 == " " || $0 == "\t" }) {
             return (String(line[..<r]), String(line[r...]).trimmingCharacters(in: .whitespaces))
