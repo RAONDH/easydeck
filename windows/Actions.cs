@@ -224,15 +224,20 @@ namespace EasyDeck
             if (t.Length == 0) throw new Exception("열 대상이 비어 있습니다");
             if (t.StartsWith("~")) t = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + t.Substring(1);
             t = Environment.ExpandEnvironmentVariables(t);
+            if (t.StartsWith("file:", StringComparison.OrdinalIgnoreCase))
+            {
+                t = t.Substring(5);
+                if (t.StartsWith("///")) t = t.Substring(3);          // file:///C:/… → C:/…
+                else if (t.StartsWith("//")) t = "\\\\" + t.Substring(2); // file://서버/… → \\서버\…
+            }
+            if (Icons.IsNetworkPath(t) && scriptExts.Concat(new[] { ".scr", ".js", ".jse", ".wsf", ".hta", ".msi", ".cpl", ".jar", ".appref-ms" })
+                    .Any(e => t.TrimEnd('\\', '/').EndsWith(e, StringComparison.OrdinalIgnoreCase)))
+                throw new Exception("네트워크에 있는 실행 파일은 열지 않습니다: " + target);
             if (t.IndexOf("://", StringComparison.Ordinal) > 0 || t.StartsWith("mailto:", StringComparison.OrdinalIgnoreCase)
                 || t.StartsWith("shell:", StringComparison.OrdinalIgnoreCase) || t.StartsWith("ms-", StringComparison.OrdinalIgnoreCase))
             {
                 ShellOpen(t); return;
             }
-            if (t.StartsWith("file:", StringComparison.OrdinalIgnoreCase)) t = t.Substring(5).TrimStart('/');
-            if (Icons.IsNetworkPath(t) && scriptExts.Concat(new[] { ".scr", ".js", ".jse", ".wsf", ".hta", ".msi", ".cpl", ".jar", ".appref-ms" })
-                    .Any(e => t.TrimEnd('\\', '/').EndsWith(e, StringComparison.OrdinalIgnoreCase)))
-                throw new Exception("네트워크에 있는 실행 파일은 열지 않습니다: " + target);
             var local = t;
             try { if (Path.IsPathRooted(local)) local = local.Replace('/', '\\'); } catch { }
             if (File.Exists(local) || Directory.Exists(local)) { ShellOpen(local); return; }

@@ -223,6 +223,9 @@ namespace EasyDeck
                 bool blocked = false;
                 try { ActionRunner.Open(@"\\server\share\x.exe"); } catch (Exception ex) { blocked = ex.Message.Contains("네트워크"); }
                 Check(blocked, "네트워크 실행 파일은 열지 않음");
+                blocked = false;
+                try { ActionRunner.Open("file://server/share/x.exe"); } catch (Exception ex) { blocked = ex.Message.Contains("네트워크"); }
+                Check(blocked, "file:// 네트워크 실행 파일도 열지 않음");
             });
 
             Try("끌어다 놓기", () =>
