@@ -218,6 +218,11 @@ namespace EasyDeck
                 Check(ActionRunner.RiskOf("volume") == ActionRunner.Risk.Safe && ActionRunner.RiskOf("open") == ActionRunner.Risk.Input
                       && ActionRunner.RiskOf("powershell") == ActionRunner.Risk.RunsCode && ActionRunner.RiskOf("새동작") == ActionRunner.Risk.RunsCode, "위험도 분류");
                 Check(ActionRunner.Unescape("a\\nb") == "a\nb", "\\n 줄바꿈");
+                Check(ActionRunner.RiskOfLine("open https://a.com") == ActionRunner.Risk.Input && ActionRunner.RiskOfLine("open C:\\x\\run.exe") == ActionRunner.Risk.RunsCode
+                      && ActionRunner.RiskOfLine("open shell:startup") == ActionRunner.Risk.RunsCode, "open은 웹 주소만 가벼운 위험");
+                bool blocked = false;
+                try { ActionRunner.Open(@"\\server\share\x.exe"); } catch (Exception ex) { blocked = ex.Message.Contains("네트워크"); }
+                Check(blocked, "네트워크 실행 파일은 열지 않음");
             });
 
             Try("끌어다 놓기", () =>

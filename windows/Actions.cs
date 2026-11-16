@@ -106,6 +106,20 @@ namespace EasyDeck
             }
         }
 
+        /// 줄 전체로 판단: open은 웹 주소만 '열기', 파일·프로그램·shell: 등은 명령 실행과 같게 봄
+        public static Risk RiskOfLine(string line)
+        {
+            var (cmd, arg) = Split(line);
+            var r = RiskOf(cmd);
+            if (r == Risk.Input && cmd.Equals("open", StringComparison.OrdinalIgnoreCase))
+            {
+                var a = arg.Trim().Trim('"');
+                bool web = a.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || a.StartsWith("https://", StringComparison.OrdinalIgnoreCase);
+                if (!web) return Risk.RunsCode;
+            }
+            return r;
+        }
+
         public static (string, string) Split(string line)
         {
             int i = line.IndexOfAny(new[] { ' ', '\t' });
@@ -215,6 +229,10 @@ namespace EasyDeck
             {
                 ShellOpen(t); return;
             }
+            if (t.StartsWith("file:", StringComparison.OrdinalIgnoreCase)) t = t.Substring(5).TrimStart('/');
+            if (Icons.IsNetworkPath(t) && scriptExts.Concat(new[] { ".scr", ".js", ".jse", ".wsf", ".hta", ".msi", ".cpl", ".jar", ".appref-ms" })
+                    .Any(e => t.TrimEnd('\\', '/').EndsWith(e, StringComparison.OrdinalIgnoreCase)))
+                throw new Exception("네트워크에 있는 실행 파일은 열지 않습니다: " + target);
             var local = t;
             try { if (Path.IsPathRooted(local)) local = local.Replace('/', '\\'); } catch { }
             if (File.Exists(local) || Directory.Exists(local)) { ShellOpen(local); return; }
@@ -561,7 +579,7 @@ namespace EasyDeck
                         {
                             var line = raw.Trim();
                             if (line.Length == 0 || line.StartsWith("#")) continue;
-                            var r = ActionRunner.RiskOf(ActionRunner.Split(line).Item1);
+                            var r = ActionRunner.RiskOfLine(line);
                             if (r == ActionRunner.Risk.Safe) continue;
                             var item = "[" + Clean(page.name) + "] " + Clean(w.label) + " — " + Clean(line);
                             (r == ActionRunner.Risk.RunsCode ? danger : input).Add(item);
@@ -571,13 +589,13 @@ namespace EasyDeck
             var sb = new StringBuilder();
             if (danger.Count > 0)
             {
-                sb.AppendLine("⚠ 명령 실행 (컴퓨터를 바꿀 수 있음) — " + danger.Count + "개");
+                sb.AppendLine("⚠ 명령·프로그램 실행 (컴퓨터를 바꿀 수 있음) — " + danger.Count + "개");
                 foreach (var d in danger) sb.AppendLine("   " + d);
                 sb.AppendLine();
             }
             if (input.Count > 0)
             {
-                sb.AppendLine("⌨ 키 입력·열기 (명령 실행에 쓰일 수 있음) — " + input.Count + "개");
+                sb.AppendLine("⌨ 키 입력·웹 주소 열기 (명령 실행에 쓰일 수 있음) — " + input.Count + "개");
                 foreach (var d in input) sb.AppendLine("   " + d);
             }
 
