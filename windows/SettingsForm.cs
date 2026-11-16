@@ -453,7 +453,7 @@ notify 메시지   sound Glass   deck hide|show|toggle
 · icons\ — 추가한 아이콘 그림
 · EasyDeck.log — 실행 기록·오류
 
-문의: 카카오 오픈채팅 https://open.kakao.com/o/pDEupVWi
+문의: 카카오 오픈채팅 https://open.kakao.com/o/ghZQNlXi
 소스: https://github.com/raon-easypaster/easydeck";
     }
 }
