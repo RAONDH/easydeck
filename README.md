@@ -5,11 +5,17 @@
 [subiDeck](https://superbrainsb.tistory.com/109)(Windows 전용)을 보고 같은 개념을 **macOS 네이티브 앱**으로 만들고 기능을 보완했습니다.
 별도 장비 없이 화면에 떠 있는 버튼판에서 단축키, 글자 입력, 앱 실행, 음량·미디어 조절 등을 실행합니다.
 
+📘 **[그림으로 보는 사용 설명서 (PDF)](docs/EasyDeck-설명서.pdf)** · 💬 **[카카오 오픈채팅 문의](https://open.kakao.com/o/pDEupVWi)**
+
 ## 배치 예시
 
 | 가로 한 줄 | 가로↔세로 | 편집 모드 |
 |---|---|---|
 | ![가로 한 줄](docs/layout-row.png) | ![세로](docs/layout-flip.png) | ![편집](docs/deck-edit.png) |
+
+| 위젯 팔레트 | 설정 |
+|---|---|
+| <img src="docs/palette.png" width="110" alt="팔레트"> | <img src="docs/settings.png" width="480" alt="설정"> |
 
 ## 내려받기
 
@@ -81,6 +87,11 @@ layout row|column|flip|undo   배치 바꾸기
 notify 메시지   sound Glass   deck hide|show|toggle
 # 주석
 ```
+
+## 설명서·문의
+
+- 사용 설명서 PDF: [docs/EasyDeck-설명서.pdf](docs/EasyDeck-설명서.pdf) (원본 `docs/manual.html`, Chrome으로 PDF 인쇄)
+- 버그·바라는 기능: [카카오 오픈채팅](https://open.kakao.com/o/pDEupVWi) 또는 [Issues](../../issues)
 
 ## 파일
 
