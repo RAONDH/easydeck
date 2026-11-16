@@ -301,6 +301,7 @@ namespace EasyDeck
         static void Sound(string arg)
         {
             var name = arg.Trim();
+            if (Icons.IsNetworkPath(name)) throw new Exception("네트워크 경로의 소리 파일은 열지 않습니다");
             try
             {
                 if (name.Length > 0 && File.Exists(name)) { new SoundPlayer(name).Play(); return; }

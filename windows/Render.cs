@@ -328,6 +328,7 @@ namespace EasyDeck
             {
                 var p = icon;
                 if (p.StartsWith("~")) p = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + p.Substring(1);
+                if (IsNetworkPath(p)) return null;   // \\서버\공유 를 열면 윈도우가 로그인 정보를 보낼 수 있음
                 if (Path.IsPathRooted(p) && File.Exists(p)) return p;
                 if (Store.IconsDir != null && icon.IndexOfAny(Path.GetInvalidFileNameChars()) < 0)
                 {
@@ -337,6 +338,14 @@ namespace EasyDeck
             }
             catch { }
             return null;
+        }
+
+        /// \\server\share, //server, \\?\ 같은 네트워크·장치 경로
+        public static bool IsNetworkPath(string p)
+        {
+            p = (p ?? "").Trim();
+            if (p.StartsWith(@"\\") || p.StartsWith("//")) return true;
+            try { return Uri.TryCreate(p, UriKind.Absolute, out var u) && u.IsUnc; } catch { return false; }
         }
 
         public static Image Image(string icon)

@@ -230,6 +230,9 @@ namespace EasyDeck
                 var u = DropMaker.Items(new DataObject(DataFormats.UnicodeText, "https://www.youtube.com/watch?v=1"));
                 var w3 = DropMaker.WidgetFor(u[0]);
                 Check(u[0].Url != null && w3.label == "youtube.com" && w3.Act("tap") == "open https://www.youtube.com/watch?v=1", "링크 → open, 이름은 주소");
+                var bad = DropMaker.WidgetFor(new DropItem { Url = "https://a.com/x\nshell calc" });
+                Check(bad == null || bad.Act("tap").IndexOf('\n') < 0, "링크 속 줄바꿈으로 동작이 끼어들지 않음");
+                Check(Icons.IsNetworkPath(@"\\server\share\a.png") && Icons.IsNetworkPath("//server/a.png") && !Icons.IsNetworkPath(@"C:\a.png") && !Icons.IsNetworkPath("ico-1.png"), "네트워크 경로 구별");
                 var k = DropMaker.Items(new DataObject(DeckForm.PaletteFormat, "timer"));
                 Check(k[0].Kind == "timer" && DropMaker.WidgetFor(k[0]).kind == WidgetKind.timer, "팔레트 → 타이머");
                 var notepad = Path.Combine(Environment.SystemDirectory, "notepad.exe");

@@ -1215,8 +1215,8 @@ namespace EasyDeck
                     s = fmt.EndsWith("W") ? Encoding.Unicode.GetString(bytes) : Encoding.Default.GetString(bytes);
                 }
                 else if (o is string str) s = str;
-                s = s?.TrimEnd('\0').Trim();
-                if (!string.IsNullOrEmpty(s)) return s;
+                s = OneLine(s);
+                if (LooksLikeUrl(s)) return s;
             }
             return null;
         }
@@ -1226,6 +1226,9 @@ namespace EasyDeck
                && s.IndexOfAny(new[] { ' ', '\n', '\r', '\t' }) < 0;
 
         static string Shorten(string s, int n) => s.Length > n ? s.Substring(0, n) + "…" : s;
+
+        /// 한 줄 동작에 넣는 값: 줄바꿈·제어 문자를 없앰
+        public static string OneLine(string s) => new string((s ?? "").Where(c => !char.IsControl(c)).ToArray()).Trim();
 
         public static Widget WidgetFor(DropItem it)
         {
@@ -1241,6 +1244,7 @@ namespace EasyDeck
                     label = Shorten(dir ? new DirectoryInfo(p).Name : Path.GetFileNameWithoutExtension(p), 14),
                     color = dir ? "#2B8A3E" : (ext == ".exe" || ext == ".lnk" || ext == ".url" || ext == ".appref-ms") ? "#1971C2" : "#343A40",
                 };
+                if (p.IndexOfAny(new[] { '\r', '\n' }) >= 0) return null;
                 w.actions["tap"] = "open " + p;
                 using (var bmp = Icons.FileIcon(p, 128, Icons.IsImage(p)))
                     if (bmp != null) w.icon = Icons.SaveIcon(bmp, p);
@@ -1253,12 +1257,15 @@ namespace EasyDeck
                 try { host = new Uri(it.Url).Host; } catch { }
                 if (host.StartsWith("www.")) host = host.Substring(4);
                 var w = new Widget { label = Shorten(it.Title ?? (host.Length > 0 ? host : "링크"), 14), icon = "sf:globe", color = "#1971C2" };
-                w.actions["tap"] = "open " + it.Url;
+                var url = OneLine(it.Url);
+                if (!LooksLikeUrl(url)) return null;
+                w.actions["tap"] = "open " + url;
                 return w;
             }
             if (it.Text != null)
             {
-                var t = it.Text.Replace("\r\n", "\n").Trim('\n', ' ');
+                var t = new string(it.Text.Replace("\r\n", "\n").Replace('\r', '\n')
+                    .Where(c => c == '\n' || c == '\t' || !char.IsControl(c)).ToArray()).Trim('\n', ' ');
                 if (t.Length == 0) return null;
                 bool single = t.IndexOf('\n') < 0 && t.Length <= 60;
                 var w = new Widget { label = Shorten(t.Split('\n')[0].Trim(), 8), icon = "sf:text.quote", color = "#5F3DC4" };
