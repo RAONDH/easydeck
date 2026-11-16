@@ -306,7 +306,7 @@ namespace EasyDeck
             {
                 if (name.Length > 0 && File.Exists(name)) { new SoundPlayer(name).Play(); return; }
                 var media = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Media", name + ".wav");
-                if (name.Length > 0 && File.Exists(media)) { new SoundPlayer(media).Play(); return; }
+                if (name.Length > 0 && !Icons.IsNetworkPath(media) && File.Exists(media)) { new SoundPlayer(media).Play(); return; }
             }
             catch (Exception e) { Log.Write("소리 재생 실패: " + e.Message); }
             switch (name.ToLowerInvariant())

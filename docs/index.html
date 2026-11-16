@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EasyDeck — 맥에서 쓰는 무료 소프트웨어 스트림덱</title>
-<meta name="description" content="장비 없이 화면에 떠 있는 버튼판 하나로 단축키·자막 입력·앱 실행·음량을 한 번에. 예배 방송 섬김이를 위한 무료 맥 프로그램.">
-<meta property="og:title" content="EasyDeck — 맥에서 쓰는 무료 소프트웨어 스트림덱">
-<meta property="og:description" content="장비 없이 화면 위 버튼판 하나로 단축키·자막 입력·앱 실행·음량을 한 번에. 무료 맥 프로그램.">
+<title>EasyDeck — 맥·윈도우 무료 소프트웨어 스트림덱</title>
+<meta name="description" content="장비 없이 화면에 떠 있는 버튼판 하나로 단축키·자막 입력·앱 실행·음량을 한 번에. 예배 방송 섬김이를 위한 무료 맥·윈도우 프로그램.">
+<meta property="og:title" content="EasyDeck — 맥·윈도우 무료 소프트웨어 스트림덱">
+<meta property="og:description" content="장비 없이 화면 위 버튼판 하나로 단축키·자막 입력·앱 실행·음량을 한 번에. 맥·윈도우 무료.">
 <meta property="og:image" content="https://raon-easypaster.github.io/easydeck/deck.png">
 <meta property="og:type" content="website">
 <link rel="icon" href="icon.png">
@@ -106,13 +106,14 @@
 
   <div class="hero">
     <h1>장비 없이, 화면 위<br><em>버튼판 하나</em>로 방송 끝</h1>
-    <p class="lead">단축키, 자막 입력, 앱 실행, 음량 조절을 버튼 한 번에. 스트림덱 장비를 사지 않아도 되는 <b>무료</b> 맥 프로그램입니다.</p>
+    <p class="lead">단축키, 자막 입력, 앱 실행, 음량 조절을 버튼 한 번에. 스트림덱 장비를 사지 않아도 되는 <b>무료</b> 프로그램입니다. 맥과 윈도우에서 모두 씁니다.</p>
     <div class="dl">
       <a class="btn main" id="btnMac" href="https://github.com/raon-easypaster/easydeck/releases/latest/download/EasyDeck.zip">맥용 받기<small>애플 칩 · 인텔 맥 · macOS 13 이상</small></a>
-      <a class="btn" href="https://github.com/raon-easypaster/easydeck/releases/latest/download/EasyDeck-Manual.pdf">📘 사진 설명서 (PDF)<small>그림으로 처음부터 차근차근</small></a>
+      <a class="btn" id="btnWin" href="https://github.com/raon-easypaster/easydeck/releases/latest/download/EasyDeck-windows.zip">윈도우용 받기<small>윈도우 10 · 11</small></a>
     </div>
+    <div style="margin-top:12px"><a href="https://github.com/raon-easypaster/easydeck/releases/latest/download/EasyDeck-Manual.pdf">📘 사진 설명서 (PDF)</a></div>
     <div class="ver" id="ver">최신 버전 · 회원 가입 없이 무료</div>
-    <div class="mobile-note" id="mobileNote">📱 휴대폰이나 윈도우에서는 쓸 수 없습니다. 교회 <b>맥</b>에서 이 페이지를 열어 받으세요.
+    <div class="mobile-note" id="mobileNote">📱 휴대폰에서는 설치할 수 없습니다. 교회 <b>컴퓨터(맥·윈도우)</b>에서 이 페이지를 열어 받으세요.
       <br><button id="copyLink" style="margin-top:8px">이 페이지 주소 복사</button></div>
   </div>
 
@@ -171,10 +172,10 @@
       <div>
         <h2>준비물은 이것뿐</h2>
         <div class="need"><ul>
-          <li>맥 한 대 (macOS 13 이상, 애플 칩·인텔 모두)</li>
+          <li>맥 (macOS 13 이상, 애플 칩·인텔) 또는 윈도우 10·11 컴퓨터</li>
           <li>그 밖에 살 장비는 없습니다</li>
         </ul></div>
-        <p class="sub" style="margin-top:14px">받아서 압축을 풀고 응용 프로그램 폴더에 넣으면 끝입니다.</p>
+        <p class="sub" style="margin-top:14px">받아서 압축을 풀면 끝입니다. 윈도우용은 실행 파일 하나(0.1MB)라 따로 깔 것이 없습니다.</p>
       </div>
     </div>
   </section>
@@ -183,27 +184,33 @@
     <h2>설치 방법</h2>
     <p class="sub">처음 한 번만 경고 창과 권한 질문이 나옵니다. 유료 인증을 받지 않은 무료 프로그램이라 나오는 안내입니다.</p>
     <div class="steps">
-      <div class="card"><h3>🍎 설치</h3><ol>
+      <div class="card"><h3>🍎 맥</h3><ol>
         <li>위의 <b>맥용 받기</b>를 누르고, 받은 zip 파일을 더블클릭해 압축을 풉니다.</li>
         <li><b>EasyDeck.app</b>을 <b>응용 프로그램</b> 폴더로 끌어다 놓습니다.</li>
         <li>앱을 <b>오른쪽 클릭 → 열기</b>. 그래도 막히면 <b>시스템 설정 → 개인정보 보호 및 보안</b> 맨 아래 <b>[그래도 열기]</b>.</li>
-        <li>메뉴 막대 오른쪽에 EasyDeck 아이콘이 생깁니다. Dock에는 나오지 않습니다.</li>
+        <li><b>손쉬운 사용</b> 권한을 물으면 허용합니다 (단축키·글자 입력에 필요).</li>
+        <li>켰는데도 안 되면 손쉬운 사용 목록에서 EasyDeck을 <b>−</b>로 지우고 <b>+</b>로 다시 넣은 뒤 앱을 다시 켭니다.</li>
       </ol></div>
-      <div class="card"><h3>🔐 손쉬운 사용 권한</h3><ol>
-        <li>처음 실행하면 <b>손쉬운 사용</b> 권한을 묻습니다. <b>[시스템 설정 열기]</b>.</li>
-        <li><b>개인정보 보호 및 보안 → 손쉬운 사용</b>에서 EasyDeck을 켭니다.</li>
-        <li>단축키·글자 입력 버튼에 필요합니다. 앱 열기·음량 버튼은 권한 없이도 됩니다.</li>
-        <li>켰는데도 안 되면 목록에서 EasyDeck을 <b>−</b>로 지우고 <b>+</b>로 다시 넣은 뒤 앱을 다시 켭니다.</li>
+      <div class="card"><h3>🪟 윈도우</h3><ol>
+        <li>위의 <b>윈도우용 받기</b>를 누르고, 받은 zip 파일을 오른쪽 클릭 → <b>모두 압축 풀기</b>.</li>
+        <li><b>EasyDeck.exe</b>를 문서 폴더 같은 곳에 두고 더블클릭합니다.</li>
+        <li>"Windows의 PC 보호" 창이 뜨면 <b>[추가 정보] → [실행]</b>.</li>
+        <li>덱이 화면 오른쪽 위에 뜹니다. 작업 표시줄 오른쪽 <b>알림 영역</b> 아이콘으로 메뉴를 엽니다.</li>
+        <li>윈도우를 켤 때 자동으로 시작하려면 <b>⚙︎ 설정 → 윈도우 시작 시 자동 실행</b>.</li>
       </ol></div>
     </div>
-    <p class="sub" style="margin-top:16px">새 버전은 같은 방법으로 받아 앱만 바꾸면 됩니다. 만들어 둔 버튼은 그대로 남습니다.</p>
+    <p class="sub" style="margin-top:16px">새 버전은 같은 방법으로 받아 앱(exe)만 바꾸면 됩니다. 만들어 둔 버튼은 그대로 남습니다. 맥에서 만든 덱(profile.json)을 윈도우에서 그대로 가져와 쓸 수도 있습니다.</p>
+    <div class="shot" style="max-width:520px;margin-top:22px">
+      <img src="win-deck.png" alt="윈도우용 EasyDeck 덱 화면">
+      <div class="cap">윈도우용 덱 — 맥 버전과 같은 버튼, 같은 사용법</div>
+    </div>
   </section>
 
   <section id="notice">
     <h2>알아 두실 점</h2>
     <div class="steps">
-      <div class="card"><h3>🍎 맥 전용입니다</h3>
-        <p>윈도우에서는 쓸 수 없습니다. 외장 모니터 밝기 조절과 암호 입력 칸 같은 보안 입력 칸에는 키 입력이 되지 않습니다. 한글 입력이 가끔 어긋나면 <b>type</b> 대신 <b>paste</b>를 쓰세요.</p></div>
+      <div class="card"><h3>⚠️ 이런 곳에서는 안 될 수 있어요</h3>
+        <p>암호 입력 칸 같은 보안 입력 칸과 일부 게임에는 키 입력이 들어가지 않습니다. 윈도우에서는 <b>관리자 권한으로 실행한 프로그램</b>에도 키가 들어가지 않습니다. 밝기 조절은 노트북 내장 화면만 됩니다. 한글 입력이 가끔 어긋나면 <b>type</b> 대신 <b>paste</b>를 쓰세요.</p></div>
       <div class="card"><h3>🙏 언제든 연락 주세요</h3>
         <p>쓰시다가 안 되는 것(버그)이 있거나, 이런 기능이 있었으면 좋겠다는 생각이 드시면 언제든 알려 주세요. 실제로 쓰시는 이야기가 가장 큰 도움이 됩니다.</p>
         <p style="margin-top:10px"><a class="btn kakao" style="min-width:0;font-size:16px;padding:10px 16px" href="https://open.kakao.com/o/pDEupVWi" target="_blank" rel="noopener">💬 카카오 오픈채팅으로 연락하기</a></p>
@@ -224,7 +231,7 @@
 
   <footer>
     <p>만든 사람: <b>쉬운목사 이광복</b> · 무료로 나눕니다 (MIT 라이선스)</p>
-    <p>Windows용 subiDeck에서 아이디어를 얻어 맥용으로 새로 만들었습니다.</p>
+    <p>Windows용 subiDeck에서 아이디어를 얻어 맥·윈도우용으로 새로 만들었습니다.</p>
     <p><a href="https://github.com/raon-easypaster/easydeck/releases">지난 버전·바뀐 내용</a> · <a href="https://open.kakao.com/o/pDEupVWi">카카오 오픈채팅</a> · <a href="https://github.com/raon-easypaster/easydeck/issues">GitHub 의견 게시판</a> · <a href="https://github.com/raon-easypaster/easydeck">소스 코드</a></p>
     <p class="org">한국AI목회연구소</p>
   </footer>
@@ -238,7 +245,11 @@
     const mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
     const win = /Win/i.test(plat) || /Windows/i.test(ua);
     const $ = id => document.getElementById(id);
-    if (mobile || win) {
+    if (win) {
+      $('btnWin').classList.add('main'); $('btnMac').classList.remove('main');
+      $('btnWin').parentNode.prepend($('btnWin'));
+    }
+    if (mobile) {
       $('mobileNote').style.display = 'block';
       $('copyLink').onclick = () => navigator.clipboard?.writeText(location.href.split('#')[0]).then(() => ($('copyLink').textContent = '복사했습니다 — 카톡으로 보내 두세요'));
     }
@@ -254,8 +265,11 @@
   fetch('https://api.github.com/repos/raon-easypaster/easydeck/releases/latest')
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(rel => {
-      const zip = (rel.assets || []).find(a => /EasyDeck\.zip$/i.test(a.name));
-      if (zip) document.querySelector('#btnMac small').textContent = `애플 칩 · 인텔 맥 · macOS 13 이상 · ${Math.max(1, Math.round(zip.size / 1048576))}MB`;
+      const size = n => n < 1048576 ? Math.max(1, Math.round(n / 1024)) + 'KB' : Math.round(n / 1048576) + 'MB';
+      const zip = (rel.assets || []).find(a => /^EasyDeck\.zip$/i.test(a.name));
+      const win = (rel.assets || []).find(a => /windows\.zip$/i.test(a.name));
+      if (zip) document.querySelector('#btnMac small').textContent = `애플 칩 · 인텔 맥 · macOS 13 이상 · ${size(zip.size)}`;
+      if (win) document.querySelector('#btnWin small').textContent = `윈도우 10 · 11 · ${size(win.size)}`;
       const d = (rel.published_at || '').slice(0, 10);
       document.getElementById('ver').textContent = `최신 ${rel.tag_name}${d ? ' · ' + d : ''} · 회원 가입 없이 무료`;
     })

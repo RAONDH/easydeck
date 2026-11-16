@@ -333,7 +333,7 @@ namespace EasyDeck
                 if (Store.IconsDir != null && icon.IndexOfAny(Path.GetInvalidFileNameChars()) < 0)
                 {
                     var q = Path.Combine(Store.IconsDir, icon);
-                    if (File.Exists(q)) return q;
+                    if (!IsNetworkPath(q) && File.Exists(q)) return q;
                 }
             }
             catch { }
@@ -343,9 +343,16 @@ namespace EasyDeck
         /// \\server\share, //server, \\?\ 같은 네트워크·장치 경로
         public static bool IsNetworkPath(string p)
         {
-            p = (p ?? "").Trim();
-            if (p.StartsWith(@"\\") || p.StartsWith("//")) return true;
-            try { return Uri.TryCreate(p, UriKind.Absolute, out var u) && u.IsUnc; } catch { return false; }
+            p = (p ?? "").Trim().Replace('/', '\\');
+            if (p.StartsWith(@"\\")) return true;                         // \\서버, \\?\, \\.\ (빗금 섞어 써도)
+            try
+            {
+                if (Uri.TryCreate(p, UriKind.Absolute, out var u) && u.IsUnc) return true;
+                if (p.Length >= 2 && p[1] == ':')                          // 네트워크 드라이브(Z: 등)
+                    return new DriveInfo(p.Substring(0, 1)).DriveType == DriveType.Network;
+            }
+            catch { }
+            return false;
         }
 
         public static Image Image(string icon)

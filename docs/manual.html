@@ -48,7 +48,7 @@
   <div class="lead">장비 없이, 화면에 떠 있는 버튼판 하나로<br>단축키 · 글자 입력 · 앱 실행 · 음량 · 미디어를 한 번에.</div>
   <img src="deck.png" alt="EasyDeck 덱 화면">
   <div class="meta">
-    <b>버전</b> v1.2.0 · macOS 13 이상 · Apple Silicon / Intel<br>
+    <b>버전</b> v1.3.0 · macOS 13 이상 (Apple Silicon / Intel) · Windows 10 · 11<br>
     <b>내려받기</b> github.com/raon-easypaster/easydeck/releases<br>
     <b>문의</b> 카카오 오픈채팅 open.kakao.com/o/pDEupVWi<br>
     <b>만든 사람</b> 쉬운목사 · MIT 라이선스(무료)
@@ -71,6 +71,7 @@
   <li>예배 방송에서 쓰는 예</li>
   <li>문제가 생겼을 때</li>
   <li>파일 위치와 백업</li>
+  <li>윈도우에서 쓰기</li>
 </ol>
 
 <h2>1. EasyDeck은 무엇인가요</h2>
@@ -272,6 +273,27 @@
   <li><code>EasyDeck.log</code>: 실행 기록과 오류</li>
 </ul>
 <p>기본 배치로 되돌릴 때는 자동으로 백업을 남깁니다.</p>
+
+<h2 class="page-break">15. 윈도우에서 쓰기</h2>
+<p>윈도우 10·11용 EasyDeck도 있습니다. 화면과 사용법은 맥 버전과 같고, 다른 점만 정리했습니다.</p>
+<figure>
+  <img src="win-deck.png" alt="윈도우용 덱" style="width:70%">
+  <figcaption>윈도우용 덱</figcaption>
+</figure>
+<table>
+  <tr><th style="width:30%">항목</th><th>윈도우에서는</th></tr>
+  <tr><td>설치</td><td><code>EasyDeck-windows.zip</code>을 받아 압축을 풀고 <code>EasyDeck.exe</code>를 실행. "Windows의 PC 보호" 창이 뜨면 [추가 정보] → [실행]</td></tr>
+  <tr><td>권한</td><td>손쉬운 사용 같은 권한 설정이 필요 없습니다</td></tr>
+  <tr><td>메뉴</td><td>작업 표시줄 오른쪽 알림 영역의 EasyDeck 아이콘 (왼쪽 클릭: 덱 보이기·숨기기)</td></tr>
+  <tr><td>덱 보이기/숨기기</td><td><b>Ctrl+Alt+D</b></td></tr>
+  <tr><td>자동 실행</td><td>⚙︎ 설정 › 윈도우 시작 시 자동 실행</td></tr>
+  <tr><td>단축키 이름</td><td><code>ctrl</code> <code>alt</code> <code>shift</code> <code>win</code>. 맥 프로필의 <code>cmd</code>는 Ctrl, <code>opt</code>는 Alt로 읽습니다</td></tr>
+  <tr><td>명령 실행</td><td><code>shell</code>은 cmd, <code>powershell</code>은 파워셸. <code>applescript</code>·<code>shortcut</code>은 맥 전용</td></tr>
+  <tr><td>앱별 페이지 전환</td><td>실행 파일 이름으로 적습니다 (예: chrome, msedge, obs64)</td></tr>
+  <tr><td>파일 위치</td><td><code>%APPDATA%\EasyDeck</code> (profile.json, icons, EasyDeck.log)</td></tr>
+  <tr><td>알아 둘 점</td><td>관리자 권한으로 실행한 프로그램에는 키 입력이 들어가지 않습니다. 밝기 조절은 노트북 내장 화면만 됩니다</td></tr>
+</table>
+<p>맥에서 만든 <code>profile.json</code>을 설정 › 가져오기로 그대로 불러와 쓸 수 있습니다.</p>
 
 <div class="tip" style="margin-top:8mm">
   <b>버그 신고 · 기능 제안</b><br>
