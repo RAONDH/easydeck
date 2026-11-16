@@ -1,0 +1,42 @@
+name: Windows build
+
+on:
+  push:
+    paths:
+      - 'windows/**'
+      - '.github/workflows/windows.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: dotnet build windows/EasyDeck.csproj -c Release -o out
+
+      - name: Self test
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath out\EasyDeck.exe -ArgumentList '--selftest', "$PWD\selftest" -Wait -PassThru
+          Get-Content -Encoding UTF8 selftest\selftest.txt
+          if ($p.ExitCode -ne 0) { Write-Error "self test failed ($($p.ExitCode))"; exit 1 }
+
+      - name: Package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory pkg | Out-Null
+          Copy-Item out\EasyDeck.exe pkg\
+          Compress-Archive -Path pkg\* -DestinationPath EasyDeck-windows.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EasyDeck-windows
+          path: EasyDeck-windows.zip
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: selftest
+          path: selftest
