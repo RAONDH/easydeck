@@ -1308,8 +1308,8 @@ namespace EasyDeck
         protected override void OnHandleCreated(EventArgs e) { base.OnHandleCreated(e); Native.RoundCorners(Handle); }
 
         float K => DeviceDpi / 96f;
-        Size PSize => new Size((int)(78 * K), (int)((30 + kinds.Length * 64 + 46) * K));
-        RectangleF TileRect(int i) => new RectangleF(11 * K, (30 + i * 64) * K, 56 * K, 56 * K);
+        Size PSize => new Size((int)(88 * K), (int)((30 + kinds.Length * 64 + 58) * K));
+        RectangleF TileRect(int i) => new RectangleF(16 * K, (30 + i * 64) * K, 56 * K, 56 * K);
 
         public void Reposition()
         {
@@ -1343,8 +1343,8 @@ namespace EasyDeck
                 if (Fonts.SymbolFamily != null) Renderer.Text(g, glyphs[i].ToString(), Fonts.Get(Fonts.SymbolFamily, 19 * k), Color.White, RectangleF.Inflate(sq, 6 * k, 6 * k));
                 Renderer.Text(g, KindInfo.Title(kinds[i]), Fonts.Get(Fonts.UiFamily, 11.5f * k, FontStyle.Bold), Color.White, new RectangleF(r.X, r.Bottom - 22 * k, r.Width, 18 * k));
             }
-            Renderer.Text(g, "앱·파일·링크·글자도\n덱에 바로 놓으세요", Fonts.Get(Fonts.UiFamily, 10 * k), Color.FromArgb(200, 255, 255, 255),
-                new RectangleF(2 * k, Height - 44 * k, Width - 4 * k, 40 * k), StringAlignment.Center, StringAlignment.Center, true);
+            Renderer.Text(g, "앱·파일·링크·\n글자도 덱에\n바로 놓으세요", Fonts.Get(Fonts.UiFamily, 9.5f * k), Color.FromArgb(200, 255, 255, 255),
+                new RectangleF(2 * k, Height - 56 * k, Width - 4 * k, 52 * k), StringAlignment.Center, StringAlignment.Center, true);
         }
 
         public Bitmap Snapshot()
