@@ -1,8 +1,8 @@
-# EasyDeck — macOS용 소프트웨어 스트림덱
+# EasyDeck — 맥·윈도우용 소프트웨어 스트림덱
 
 ![EasyDeck](docs/deck.png)
 
-[subiDeck](https://superbrainsb.tistory.com/109)(Windows 전용)을 보고 같은 개념을 **macOS 네이티브 앱**으로 만들고 기능을 보완했습니다.
+[subiDeck](https://superbrainsb.tistory.com/109)(Windows 전용)을 보고 같은 개념을 **macOS 네이티브 앱**으로 만들고 기능을 보완했습니다. 같은 기능의 **윈도우용**(10·11)도 있습니다.
 별도 장비 없이 화면에 떠 있는 버튼판에서 단축키, 글자 입력, 앱 실행, 음량·미디어 조절 등을 실행합니다.
 
 🌐 **[소개 페이지](https://raon-easypaster.github.io/easydeck/)** · 📘 **[그림으로 보는 사용 설명서 (PDF)](docs/EasyDeck-설명서.pdf)** · 💬 **[카카오 오픈채팅 문의](https://open.kakao.com/o/pDEupVWi)**
@@ -19,8 +19,21 @@
 
 ## 내려받기
 
-[Releases](../../releases)에서 `EasyDeck.zip`을 받아 압축을 풀고 `EasyDeck.app`을 응용 프로그램 폴더로 옮기세요.
-개인 서명 앱이라 처음 열 때 경고가 뜨면 **오른쪽 클릭 › 열기**를 누르세요.
+[Releases](../../releases/latest)에서 받으세요.
+
+- **맥**: `EasyDeck.zip` → 압축을 풀고 `EasyDeck.app`을 응용 프로그램 폴더로. 처음 열 때 경고가 뜨면 **오른쪽 클릭 › 열기**
+- **윈도우 10·11**: `EasyDeck-windows.zip` → 압축을 풀고 `EasyDeck.exe` 실행 (0.1MB, 설치 필요 없음). "Windows의 PC 보호" 창이 뜨면 **[추가 정보] → [실행]**
+
+## 윈도우용
+
+![윈도우용 덱](docs/win-deck.png)
+
+- 맥 버전과 같은 위젯·동작·끌어다 놓기·편집 팔레트·배치 바꾸기·페이지 자동 전환
+- 덱 보이기/숨기기 **Ctrl+Alt+D**, 메뉴는 작업 표시줄 알림 영역 아이콘
+- **맥에서 만든 profile.json을 그대로** 가져와 씀 (`cmd`→Ctrl, `opt`→Alt로 읽음)
+- 동작 추가: `shell`(cmd), `powershell`. `applescript`·`shortcut`은 맥 전용
+- 데이터: `%APPDATA%\EasyDeck` · 소스: [`windows/`](windows) (C#, .NET Framework 4.8 — 윈도우에 기본 포함)
+- 빌드: `dotnet build windows/EasyDeck.csproj -c Release` 또는 GitHub Actions(`Windows build`)가 빌드하고 자체 시험(`EasyDeck.exe --selftest 폴더`)까지 돌립니다
 
 ## 빌드 / 실행
 
@@ -112,6 +125,7 @@ notify 메시지   sound Glass   deck hide|show|toggle
 | `Sources/WidgetView.swift` | 위젯 그리기와 마우스/휠 조작, 편집 드래그 |
 | `Sources/Inspector.swift` | 위젯 편집 창·설정 창(SwiftUI), 로그인 항목 |
 | `Sources/main.swift` | 앱 진입점, 메뉴 막대 |
+| `windows/*.cs` | 윈도우용 (같은 구조: Model·Actions·Keys·Deck·Inspector·SettingsForm·Program) |
 
 ## 알려진 제한
 
