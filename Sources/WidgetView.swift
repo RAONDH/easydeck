@@ -466,6 +466,21 @@ final class WidgetView: NSView {
         return true
     }
 
+    /// 겹친 위젯이 하나뿐이고 서로 자리를 바꿀 수 있으면 그 위젯을 돌려줌
+    private func swapPartner(_ r: (x: Int, y: Int, w: Int, h: Int), _ w: Widget) -> Widget? {
+        let page = Store.shared.page
+        let hits = page.widgets.filter { o in
+            o.id != w.id && r.x < o.x + o.w && o.x < r.x + r.w && r.y < o.y + o.h && o.y < r.y + r.h
+        }
+        guard hits.count == 1, let o = hits.first else { return nil }
+        // 끌던 위젯은 상대 자리로, 상대는 끌던 위젯의 원래 자리로
+        let ignore: Set<String> = [w.id, o.id]
+        let a = (x: o.x, y: o.y), b = (x: w.x, y: w.y)
+        guard page.fits(a.x, a.y, w.w, w.h, ignoring: ignore), page.fits(b.x, b.y, o.w, o.h, ignoring: ignore) else { return nil }
+        let overlap = a.x < b.x + o.w && b.x < a.x + w.w && a.y < b.y + o.h && b.y < a.y + w.h
+        return overlap ? nil : o
+    }
+
     private func editDragged(_ p: NSPoint, _ w: Widget) {
         guard editDrag != .none, dragged else { return }
         let step = CGFloat(dc.s.cellSize + dc.s.gap)
@@ -474,20 +489,49 @@ final class WidgetView: NSView {
         var r = (x: w.x, y: w.y, w: w.w, h: w.h)
         if editDrag == .move { r.x += dx; r.y += dy } else { r.w = max(1, w.w + dx); r.h = max(1, w.h + dy) }
         proposed = r
-        let ok = fits(r.x, r.y, r.w, r.h, Store.shared.page, ignoring: w.id)
         guard let content = superview as? DeckContentView else { return }
-        content.ghost.frame = dc.cellRect(r.x, r.y, r.w, r.h)
-        content.ghost.ok = ok
+        var ghostRect = dc.cellRect(r.x, r.y, r.w, r.h)
+        if fits(r.x, r.y, r.w, r.h, Store.shared.page, ignoring: w.id) {
+            content.ghost.mode = .ok
+        } else if editDrag == .move, let o = swapPartner(r, w) {
+            content.ghost.mode = .swap          // 파란색: 놓으면 자리 바꾸기
+            ghostRect = dc.cellRect(o.x, o.y, w.w, w.h)
+        } else {
+            content.ghost.mode = .bad
+        }
+        content.ghost.frame = ghostRect
         content.ghost.isHidden = false
         content.addSubview(content.ghost, positioned: .above, relativeTo: nil)
+        // 끌고 있는 위젯이 마우스를 따라 움직이게
+        if editDrag == .move {
+            let home = dc.cellRect(w.x, w.y, w.w, w.h)
+            frame.origin = NSPoint(x: home.minX + (p.x - downPoint.x), y: home.minY + (p.y - downPoint.y))
+            alphaValue = 0.85
+            content.addSubview(self, positioned: .above, relativeTo: nil)
+            content.addSubview(content.ghost, positioned: .below, relativeTo: self)
+        }
     }
 
     private func editEnded(_ w: Widget) {
         (superview as? DeckContentView)?.ghost.isHidden = true
+        alphaValue = 1
+        let home = dc.cellRect(w.x, w.y, w.w, w.h)
         defer { editDrag = .none; proposed = nil }
         if !dragged { AppDelegate.shared.openInspector(widgetID); return }
-        guard let r = proposed, fits(r.x, r.y, r.w, r.h, Store.shared.page, ignoring: w.id) else { return }
-        Store.shared.updateWidget(widgetID) { $0.x = r.x; $0.y = r.y; $0.w = r.w; $0.h = r.h }
+        guard let r = proposed else { frame = home; return }
+        if fits(r.x, r.y, r.w, r.h, Store.shared.page, ignoring: w.id) {
+            Store.shared.updateWidget(widgetID) { $0.x = r.x; $0.y = r.y; $0.w = r.w; $0.h = r.h }
+        } else if editDrag == .move, let o = swapPartner(r, w) {
+            let (wx, wy, ox, oy) = (w.x, w.y, o.x, o.y)
+            Store.shared.mutate { p in
+                guard let i = p.pages[p.currentPage].widgets.firstIndex(where: { $0.id == w.id }),
+                      let j = p.pages[p.currentPage].widgets.firstIndex(where: { $0.id == o.id }) else { return }
+                p.pages[p.currentPage].widgets[i].x = ox; p.pages[p.currentPage].widgets[i].y = oy
+                p.pages[p.currentPage].widgets[j].x = wx; p.pages[p.currentPage].widgets[j].y = wy
+            }
+        } else {
+            NSAnimationContext.runAnimationGroup { $0.duration = 0.15; animator().frame = home }
+        }
     }
 }
 

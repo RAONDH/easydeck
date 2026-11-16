@@ -168,6 +168,7 @@ final class DeckController: NSObject, NSWindowDelegate {
 
     func windowDidMove(_ notification: Notification) {
         let f = panel.frame
+        if editing { PaletteController.shared.position() }
         Store.shared.mutateSilently { $0.settings.frameX = f.minX; $0.settings.frameY = f.maxY }
     }
 
@@ -178,11 +179,12 @@ final class DeckController: NSObject, NSWindowDelegate {
         panel.alphaValue = 1
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in self?.content?.updateOpacity() }
     }
-    func hide() { panel.orderOut(nil) }
+    func hide() { panel.orderOut(nil); if editing { setEditing(false) } }
     func toggleVisible() { panel.isVisible ? hide() : show() }
 
     func setEditing(_ on: Bool) {
         editing = on
+        on ? PaletteController.shared.show() : PaletteController.shared.hide()
         content?.applyEditing()
         panel.alphaValue = 1
         if !on { content?.updateOpacity() }
@@ -450,6 +452,7 @@ final class DeckContentView: NSView {
     var dc: DeckController { DeckController.shared }
 
     func build() {
+        registerForDraggedTypes(DropMaker.readTypes)
         subviews.forEach { $0.removeFromSuperview() }
         widgetViews.removeAll()
         bezel = BezelView(frame: NSRect(x: 0, y: 0, width: bounds.width, height: dc.bezelH))
@@ -502,6 +505,13 @@ final class DeckContentView: NSView {
 
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 
+    // 끌어다 놓기 (DragDrop.swift)
+    override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation { dragUpdate(sender) }
+    override func draggingUpdated(_ sender: NSDraggingInfo) -> NSDragOperation { dragUpdate(sender) }
+    override func draggingExited(_ sender: NSDraggingInfo?) { dragEnded() }
+    override func draggingEnded(_ sender: NSDraggingInfo) { dragEnded() }
+    override func performDragOperation(_ sender: NSDraggingInfo) -> Bool { performDrop(sender) }
+
     override func draw(_ dirtyRect: NSRect) {
         guard dc.editing else { return }
         let page = Store.shared.page
@@ -551,16 +561,9 @@ final class DeckContentView: NSView {
     @objc func addWidget(_ sender: NSMenuItem) {
         guard let a = sender.representedObject as? [Any], let k = WidgetKind(rawValue: a[0] as! String) else { return }
         let x = a[1] as! Int, y = a[2] as! Int
-        var w = Widget(kind: k, x: x, y: y, label: k.title)
-        switch k {
-        case .button: w.icon = "sf:star.fill"; w.color = "#3B5BDB"
-        case .toggle: w.icon = "sf:power"; w.color = "#2B8A3E"
-        case .knob: w.icon = "sf:dial.medium"; w.color = "#E8590C"
-        case .slider:
-            w.color = "#E8590C"
-            if x + 1 < Store.shared.page.cols && widgetAt(x + 1, y) == nil { w.w = 2 }
-        case .timer: w.color = "#0B7285"
-        }
+        var w = Widget.template(k)
+        w.x = x; w.y = y
+        if k == .slider && x + 1 < Store.shared.page.cols && widgetAt(x + 1, y) == nil { w.w = 2 }
         Store.shared.mutate { $0.pages[$0.currentPage].widgets.append(w) }
         AppDelegate.shared.openInspector(w.id)
     }
@@ -580,9 +583,11 @@ final class DeckContentView: NSView {
 // MARK: - 이동/크기 조절 미리보기
 
 final class GhostView: NSView {
-    var ok = true { didSet { needsDisplay = true } }
+    enum Mode { case ok, bad, swap }
+    var mode: Mode = .ok { didSet { needsDisplay = true } }
+    var ok: Bool { get { mode == .ok } set { mode = newValue ? .ok : .bad } }
     override func draw(_ dirtyRect: NSRect) {
-        let c: NSColor = ok ? .systemGreen : .systemRed
+        let c: NSColor = mode == .ok ? .systemGreen : mode == .swap ? .systemBlue : .systemRed
         c.withAlphaComponent(0.25).setFill()
         c.setStroke()
         let p = NSBezierPath(roundedRect: bounds.insetBy(dx: 1, dy: 1), xRadius: 10, yRadius: 10)

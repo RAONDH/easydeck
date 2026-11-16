@@ -16,6 +16,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         statusItem.button?.action = #selector(statusClicked(_:))
         statusItem.button?.sendAction(on: [.leftMouseUp, .rightMouseUp])
 
+        if ProcessInfo.processInfo.environment["EASYDECK_SELFTEST"] != nil {
+            DispatchQueue.main.async { SelfTest.run() }
+            return
+        }
         DeckController.shared.start()
 
         // open EasyDeck.app --args --enable-login-item : 로그인 시 자동 실행 등록
