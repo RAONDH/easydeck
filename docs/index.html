@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EasyDeck — 맥에서 쓰는 무료 소프트웨어 스트림덱</title>
+<meta name="description" content="장비 없이 화면에 떠 있는 버튼판 하나로 단축키·자막 입력·앱 실행·음량을 한 번에. 예배 방송 섬김이를 위한 무료 맥 프로그램.">
+<meta property="og:title" content="EasyDeck — 맥에서 쓰는 무료 소프트웨어 스트림덱">
+<meta property="og:description" content="장비 없이 화면 위 버튼판 하나로 단축키·자막 입력·앱 실행·음량을 한 번에. 무료 맥 프로그램.">
+<meta property="og:image" content="https://raon-easypaster.github.io/easydeck/deck.png">
+<meta property="og:type" content="website">
+<link rel="icon" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f8fd; --panel: #ffffff; --text: #191c2b; --muted: #5d6275; --line: #e1e4f0;
+    --brand: #2d44a8; --brand2: #4361d8; --accent: #e8743b; --soft: #ebeffb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #12141b; --panel: #1b1e28; --text: #e9ebf5; --muted: #a0a5b8; --line: #2b2f3e; --brand: #9fb2ff; --brand2: #7d95ff; --accent: #ff9a62; --soft: #1f2433; }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.7 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif; word-break: keep-all; }
+  a { color: var(--brand2); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+  header.top { display: flex; align-items: center; gap: 10px; padding: 18px 0; }
+  header.top img { width: 34px; height: 34px; border-radius: 8px; }
+  header.top b { font-size: 18px; }
+  header.top .grow { flex: 1; }
+  header.top a { font-size: 14px; color: var(--muted); text-decoration: none; margin-left: 14px; }
+
+  .hero { padding: 36px 0 20px; text-align: center; }
+  .hero h1 { font-size: clamp(28px, 5.4vw, 46px); line-height: 1.3; margin: 0 0 14px; font-weight: 900; letter-spacing: -0.02em; }
+  .hero h1 em { font-style: normal; color: var(--brand2); }
+  .hero p.lead { font-size: clamp(16px, 2.3vw, 19px); color: var(--muted); margin: 0 auto 26px; max-width: 640px; }
+  .dl { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .btn { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; min-width: 230px; padding: 14px 22px; border-radius: 14px; text-decoration: none; font-weight: 700; font-size: 18px; border: 2px solid var(--brand2); color: var(--brand2); background: var(--panel); transition: transform .1s; }
+  .btn small { font-weight: 400; font-size: 13px; opacity: .85; }
+  .btn.main { background: var(--brand2); color: #fff; }
+  .btn.kakao { background: #fee500; border-color: #fee500; color: #191919; }
+  .btn:active { transform: scale(.98); }
+  .ver { margin-top: 12px; color: var(--muted); font-size: 14px; }
+  .mobile-note { display: none; margin: 14px auto 0; max-width: 520px; background: var(--soft); border-radius: 12px; padding: 12px 16px; font-size: 15px; }
+  .mobile-note button, .acct button { font: inherit; font-size: 14px; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); cursor: pointer; }
+
+  .shot { margin: 34px auto 0; max-width: 760px; }
+  .shot img { width: 100%; display: block; border-radius: 16px; box-shadow: 0 12px 44px rgba(20, 30, 80, .28); }
+  .cap { text-align: center; color: var(--muted); font-size: 14px; margin-top: 10px; }
+
+  section { padding: 56px 0 0; }
+  h2 { font-size: clamp(22px, 3.6vw, 30px); margin: 0 0 8px; font-weight: 900; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  .three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+  .card .pic { height: 190px; display: flex; align-items: center; justify-content: center; background: #2a2c33; border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+  .card .pic img { max-width: 92%; max-height: 92%; border-radius: 6px; display: block; }
+  .card h3 { margin: 0 0 4px; font-size: 18px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15px; }
+  .feat { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 22px; padding: 0; margin: 0; list-style: none; }
+  .feat li { padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .feat b { display: block; }
+  .feat span { color: var(--muted); font-size: 15px; }
+  .wide img { width: 100%; display: block; border-radius: 10px; box-shadow: 0 6px 24px rgba(20, 30, 80, .2); }
+  .two { display: grid; grid-template-columns: 1fr 1.2fr; gap: 24px; align-items: center; }
+  .two img { width: 100%; border-radius: 12px; box-shadow: 0 6px 24px rgba(20, 30, 80, .2); }
+  .ex { width: 100%; border-collapse: collapse; font-size: 15px; }
+  .ex td { padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .ex code { font-family: 'SF Mono', Menlo, monospace; font-size: 13.5px; background: var(--soft); padding: 1px 6px; border-radius: 5px; white-space: nowrap; }
+
+  .steps { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .steps ol { margin: 8px 0 0; padding-left: 20px; }
+  .steps li { margin: 6px 0; }
+  .need { background: var(--soft); border-radius: 14px; padding: 16px 20px; }
+  .need ul { margin: 6px 0 0; padding-left: 20px; }
+  .support { text-align: center; padding: 22px 18px; }
+  .support h3 { margin: 0 0 6px; font-size: 19px; }
+  .support p { margin: 0 0 14px; color: var(--muted); }
+  .acct { display: inline-flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: center; background: var(--soft); border-radius: 12px; padding: 10px 16px; }
+  .acct b { font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+
+  footer { margin: 60px 0 0; padding: 26px 0 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; text-align: center; }
+  footer p { margin: 4px 0; }
+  footer .org { margin-top: 14px; font-weight: 700; color: var(--text); letter-spacing: .02em; }
+
+  @media (max-width: 760px) {
+    .three, .feat, .two, .steps { grid-template-columns: 1fr; }
+    header.top a.hide-m { display: none; }
+    .btn { min-width: 0; width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <img src="icon.png" alt="">
+    <b>EasyDeck</b>
+    <span class="grow"></span>
+    <a href="#features" class="hide-m">할 수 있는 것</a>
+    <a href="#install">설치 방법</a>
+    <a href="#notice" class="hide-m">연락하기</a>
+    <a href="https://github.com/raon-easypaster/easydeck/releases/latest/download/EasyDeck-Manual.pdf">설명서</a>
+  </header>
+
+  <div class="hero">
+    <h1>장비 없이, 화면 위<br><em>버튼판 하나</em>로 방송 끝</h1>
+    <p class="lead">단축키, 자막 입력, 앱 실행, 음량 조절을 버튼 한 번에. 스트림덱 장비를 사지 않아도 되는 <b>무료</b> 맥 프로그램입니다.</p>
+    <div class="dl">
+      <a class="btn main" id="btnMac" href="https://github.com/raon-easypaster/easydeck/releases/latest/download/EasyDeck.zip">맥용 받기<small>애플 칩 · 인텔 맥 · macOS 13 이상</small></a>
+      <a class="btn" href="https://github.com/raon-easypaster/easydeck/releases/latest/download/EasyDeck-Manual.pdf">📘 사진 설명서 (PDF)<small>그림으로 처음부터 차근차근</small></a>
+    </div>
+    <div class="ver" id="ver">최신 버전 · 회원 가입 없이 무료</div>
+    <div class="mobile-note" id="mobileNote">📱 휴대폰이나 윈도우에서는 쓸 수 없습니다. 교회 <b>맥</b>에서 이 페이지를 열어 받으세요.
+      <br><button id="copyLink" style="margin-top:8px">이 페이지 주소 복사</button></div>
+  </div>
+
+  <div class="shot">
+    <img src="deck.png" alt="EasyDeck 덱 화면 — 복사, 붙여넣기, 캡처, 인사말, 재생, 볼륨, 타이머 버튼">
+    <div class="cap">버튼을 눌러도 쓰던 프로그램의 포커스는 그대로입니다</div>
+  </div>
+
+  <section>
+    <h2>끌어다 놓으면 버튼이 생깁니다</h2>
+    <p class="sub">설정 파일을 만질 필요 없이, 마우스로 끌어다 놓기만 하면 됩니다.</p>
+    <div class="three">
+      <div class="card"><div class="pic"><img src="palette.png" alt="" style="max-height:170px"></div><h3>🧩 팔레트에서 끌어 놓기</h3><p>버튼·토글·노브·슬라이더·타이머를 원하는 칸에 끌어다 놓습니다.</p></div>
+      <div class="card"><div class="pic"><img src="deck-edit.png" alt=""></div><h3>📂 앱·파일·링크·글자</h3><p>Finder의 앱, 찬양 폴더, 교회 홈페이지 주소, 자주 쓰는 문장을 덱에 놓으면 아이콘과 함께 버튼이 됩니다.</p></div>
+      <div class="card"><div class="pic"><img src="layout-flip.png" alt="" style="max-height:176px"></div><h3>↔︎ 모양도 한 번에</h3><p>가로 한 줄, 세로 한 줄, 가로↔세로 전환. 마음에 안 들면 바로 되돌리기.</p></div>
+    </div>
+  </section>
+
+  <section id="features">
+    <h2>할 수 있는 것</h2>
+    <p class="sub">스트림덱 장비로 하던 일을 대부분 화면에서 합니다.</p>
+    <ul class="feat">
+      <li><b>⌨️ 단축키</b><span>송출·자막 프로그램 단축키를 버튼 하나로. 실제 키를 눌러 녹화해서 넣습니다</span></li>
+      <li><b>✍️ 글자 입력</b><span>교회 이름, 설교 제목, 인사말을 한글 그대로 입력하거나 붙여넣기</span></li>
+      <li><b>🚀 앱·파일·웹 열기</b><span>방송 프로그램, 찬양 폴더, 유튜브 스튜디오를 버튼으로</span></li>
+      <li><b>🔊 음량·미디어</b><span>노브와 슬라이더를 시스템 음량에 연결, 재생·다음 곡</span></li>
+      <li><b>⏱ 타이머</b><span>설교·광고 시간 재기, 휠로 시간 조절, 끝나면 알림</span></li>
+      <li><b>👆 클릭·더블클릭·길게</b><span>버튼 하나에 세 가지 동작을 따로 넣기</span></li>
+      <li><b>📑 여러 페이지</b><span>예배용·편집용 페이지를 나누고, 앞에 있는 앱에 맞춰 자동 전환</span></li>
+      <li><b>🌐 전역 단축키</b><span>덱을 누르지 않아도 키보드로 버튼 실행, ⌥⌘D로 덱 보이기·숨기기</span></li>
+      <li><b>🌫 화면을 가리지 않게</b><span>항상 위, 마우스를 치우면 흐려짐, Ctrl+휠로 크기 조절</span></li>
+      <li><b>💾 내보내기·가져오기</b><span>만든 덱을 파일 하나로 다른 맥과 나누기 (위험한 동작은 먼저 보여 줌)</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="wide">
+      <img src="layout-row.png" alt="가로 한 줄로 바꾼 덱">
+      <div class="cap">가로 한 줄 — 화면 위나 아래에 길게 붙여 두면 방송 화면을 가리지 않습니다</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="two">
+      <div>
+        <h2>예배 방송에서는 이렇게</h2>
+        <p class="sub">버튼 이름과 동작은 교회에 맞게 바꾸세요.</p>
+        <table class="ex">
+          <tr><td>다음 슬라이드</td><td><code>key right</code></td></tr>
+          <tr><td>교회 이름 자막</td><td><code>type 라온동행교회</code></td></tr>
+          <tr><td>송출 프로그램 열기</td><td>앱을 덱에 끌어다 놓기</td></tr>
+          <tr><td>설교 타이머</td><td>타이머 위젯 30분</td></tr>
+          <tr><td>모니터 음량</td><td>슬라이더 + 시스템 음량</td></tr>
+        </table>
+      </div>
+      <div>
+        <h2>준비물은 이것뿐</h2>
+        <div class="need"><ul>
+          <li>맥 한 대 (macOS 13 이상, 애플 칩·인텔 모두)</li>
+          <li>그 밖에 살 장비는 없습니다</li>
+        </ul></div>
+        <p class="sub" style="margin-top:14px">받아서 압축을 풀고 응용 프로그램 폴더에 넣으면 끝입니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="install">
+    <h2>설치 방법</h2>
+    <p class="sub">처음 한 번만 경고 창과 권한 질문이 나옵니다. 유료 인증을 받지 않은 무료 프로그램이라 나오는 안내입니다.</p>
+    <div class="steps">
+      <div class="card"><h3>🍎 설치</h3><ol>
+        <li>위의 <b>맥용 받기</b>를 누르고, 받은 zip 파일을 더블클릭해 압축을 풉니다.</li>
+        <li><b>EasyDeck.app</b>을 <b>응용 프로그램</b> 폴더로 끌어다 놓습니다.</li>
+        <li>앱을 <b>오른쪽 클릭 → 열기</b>. 그래도 막히면 <b>시스템 설정 → 개인정보 보호 및 보안</b> 맨 아래 <b>[그래도 열기]</b>.</li>
+        <li>메뉴 막대 오른쪽에 EasyDeck 아이콘이 생깁니다. Dock에는 나오지 않습니다.</li>
+      </ol></div>
+      <div class="card"><h3>🔐 손쉬운 사용 권한</h3><ol>
+        <li>처음 실행하면 <b>손쉬운 사용</b> 권한을 묻습니다. <b>[시스템 설정 열기]</b>.</li>
+        <li><b>개인정보 보호 및 보안 → 손쉬운 사용</b>에서 EasyDeck을 켭니다.</li>
+        <li>단축키·글자 입력 버튼에 필요합니다. 앱 열기·음량 버튼은 권한 없이도 됩니다.</li>
+        <li>켰는데도 안 되면 목록에서 EasyDeck을 <b>−</b>로 지우고 <b>+</b>로 다시 넣은 뒤 앱을 다시 켭니다.</li>
+      </ol></div>
+    </div>
+    <p class="sub" style="margin-top:16px">새 버전은 같은 방법으로 받아 앱만 바꾸면 됩니다. 만들어 둔 버튼은 그대로 남습니다.</p>
+  </section>
+
+  <section id="notice">
+    <h2>알아 두실 점</h2>
+    <div class="steps">
+      <div class="card"><h3>🍎 맥 전용입니다</h3>
+        <p>윈도우에서는 쓸 수 없습니다. 외장 모니터 밝기 조절과 암호 입력 칸 같은 보안 입력 칸에는 키 입력이 되지 않습니다. 한글 입력이 가끔 어긋나면 <b>type</b> 대신 <b>paste</b>를 쓰세요.</p></div>
+      <div class="card"><h3>🙏 언제든 연락 주세요</h3>
+        <p>쓰시다가 안 되는 것(버그)이 있거나, 이런 기능이 있었으면 좋겠다는 생각이 드시면 언제든 알려 주세요. 실제로 쓰시는 이야기가 가장 큰 도움이 됩니다.</p>
+        <p style="margin-top:10px"><a class="btn kakao" style="min-width:0;font-size:16px;padding:10px 16px" href="https://open.kakao.com/o/pDEupVWi" target="_blank" rel="noopener">💬 카카오 오픈채팅으로 연락하기</a></p>
+        <p style="margin-top:8px;font-size:13px">회원 가입 없이 카카오톡으로 바로 이야기할 수 있습니다.</p></div>
+    </div>
+  </section>
+
+  <section id="support">
+    <div class="card support">
+      <h3>🤝 EasyDeck은 자율 후원으로 운영됩니다</h3>
+      <p>후원은 부담을 갖지 않으셔도 됩니다. 무료로 사용하셔도 괜찮습니다.</p>
+      <div class="acct">
+        <span>카카오뱅크 <b>3333-01-9034483</b> 이광복</span>
+        <button type="button" id="copyAcct">계좌번호 복사</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>만든 사람: <b>쉬운목사 이광복</b> · 무료로 나눕니다 (MIT 라이선스)</p>
+    <p>Windows용 subiDeck에서 아이디어를 얻어 맥용으로 새로 만들었습니다.</p>
+    <p><a href="https://github.com/raon-easypaster/easydeck/releases">지난 버전·바뀐 내용</a> · <a href="https://open.kakao.com/o/pDEupVWi">카카오 오픈채팅</a> · <a href="https://github.com/raon-easypaster/easydeck/issues">GitHub 의견 게시판</a> · <a href="https://github.com/raon-easypaster/easydeck">소스 코드</a></p>
+    <p class="org">한국AI목회연구소</p>
+  </footer>
+</div>
+
+<script>
+  // 휴대폰·윈도우에서 들어오면 안내
+  (function () {
+    const ua = navigator.userAgent || '';
+    const plat = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+    const mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+    const win = /Win/i.test(plat) || /Windows/i.test(ua);
+    const $ = id => document.getElementById(id);
+    if (mobile || win) {
+      $('mobileNote').style.display = 'block';
+      $('copyLink').onclick = () => navigator.clipboard?.writeText(location.href.split('#')[0]).then(() => ($('copyLink').textContent = '복사했습니다 — 카톡으로 보내 두세요'));
+    }
+  })();
+
+  // 후원 계좌번호 복사 (숫자만)
+  document.getElementById('copyAcct').onclick = e => {
+    const no = '3333019034483';
+    (navigator.clipboard ? navigator.clipboard.writeText(no) : Promise.reject()).then(() => (e.target.textContent = '복사했습니다'), () => prompt('계좌번호', no));
+  };
+
+  // 최신 버전 정보 — 실패해도 위 고정 링크는 그대로 동작
+  fetch('https://api.github.com/repos/raon-easypaster/easydeck/releases/latest')
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(rel => {
+      const zip = (rel.assets || []).find(a => /EasyDeck\.zip$/i.test(a.name));
+      if (zip) document.querySelector('#btnMac small').textContent = `애플 칩 · 인텔 맥 · macOS 13 이상 · ${Math.max(1, Math.round(zip.size / 1048576))}MB`;
+      const d = (rel.published_at || '').slice(0, 10);
+      document.getElementById('ver').textContent = `최신 ${rel.tag_name}${d ? ' · ' + d : ''} · 회원 가입 없이 무료`;
+    })
+    .catch(() => {});
+</script>
+</body>
+</html>
