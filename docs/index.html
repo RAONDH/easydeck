@@ -7,7 +7,7 @@
 <meta name="description" content="장비 없이 화면에 떠 있는 버튼판 하나로 단축키·자막 입력·앱 실행·음량을 한 번에. 예배 방송 섬김이를 위한 무료 맥·윈도우 프로그램.">
 <meta property="og:title" content="EasyDeck — 맥·윈도우 무료 소프트웨어 스트림덱">
 <meta property="og:description" content="장비 없이 화면 위 버튼판 하나로 단축키·자막 입력·앱 실행·음량을 한 번에. 맥·윈도우 무료.">
-<meta property="og:image" content="https://raon-easypaster.github.io/easydeck/deck.png">
+<meta property="og:image" content="https://raondh.github.io/easydeck/deck.png">
 <meta property="og:type" content="website">
 <link rel="icon" href="icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -101,17 +101,17 @@
     <a href="#features" class="hide-m">할 수 있는 것</a>
     <a href="#install">설치 방법</a>
     <a href="#notice" class="hide-m">연락하기</a>
-    <a href="https://github.com/raon-easypaster/easydeck/releases/latest/download/EasyDeck-Manual.pdf">설명서</a>
+    <a href="https://github.com/RAONDH/easydeck/releases/latest/download/EasyDeck-Manual.pdf">설명서</a>
   </header>
 
   <div class="hero">
     <h1>장비 없이, 화면 위<br><em>버튼판 하나</em>로 방송 끝</h1>
     <p class="lead">단축키, 자막 입력, 앱 실행, 음량 조절을 버튼 한 번에. 스트림덱 장비를 사지 않아도 되는 <b>무료</b> 프로그램입니다. 맥과 윈도우에서 모두 씁니다.</p>
     <div class="dl">
-      <a class="btn main" id="btnMac" href="https://github.com/raon-easypaster/easydeck/releases/latest/download/EasyDeck.zip">맥용 받기<small>애플 칩 · 인텔 맥 · macOS 13 이상</small></a>
-      <a class="btn" id="btnWin" href="https://github.com/raon-easypaster/easydeck/releases/latest/download/EasyDeck-windows.zip">윈도우용 받기<small>윈도우 10 · 11</small></a>
+      <a class="btn main" id="btnMac" href="https://github.com/RAONDH/easydeck/releases/latest/download/EasyDeck.zip">맥용 받기<small>애플 칩 · 인텔 맥 · macOS 13 이상</small></a>
+      <a class="btn" id="btnWin" href="https://github.com/RAONDH/easydeck/releases/latest/download/EasyDeck-windows.zip">윈도우용 받기<small>윈도우 10 · 11</small></a>
     </div>
-    <div style="margin-top:12px"><a href="https://github.com/raon-easypaster/easydeck/releases/latest/download/EasyDeck-Manual.pdf">📘 사진 설명서 (PDF)</a></div>
+    <div style="margin-top:12px"><a href="https://github.com/RAONDH/easydeck/releases/latest/download/EasyDeck-Manual.pdf">📘 사진 설명서 (PDF)</a></div>
     <div class="ver" id="ver">최신 버전 · 회원 가입 없이 무료</div>
     <div class="mobile-note" id="mobileNote">📱 휴대폰에서는 설치할 수 없습니다. 교회 <b>컴퓨터(맥·윈도우)</b>에서 이 페이지를 열어 받으세요.
       <br><button id="copyLink" style="margin-top:8px">이 페이지 주소 복사</button></div>
@@ -232,7 +232,7 @@
   <footer>
     <p>만든 사람: <b>쉬운목사 이광복</b> · 무료로 나눕니다 (MIT 라이선스)</p>
     <p>Windows용 subiDeck에서 아이디어를 얻어 맥·윈도우용으로 새로 만들었습니다.</p>
-    <p><a href="https://github.com/raon-easypaster/easydeck/releases">지난 버전·바뀐 내용</a> · <a href="https://open.kakao.com/o/ghZQNlXi">카카오 오픈채팅</a> · <a href="https://github.com/raon-easypaster/easydeck/issues">GitHub 의견 게시판</a> · <a href="https://github.com/raon-easypaster/easydeck">소스 코드</a></p>
+    <p><a href="https://github.com/RAONDH/easydeck/releases">지난 버전·바뀐 내용</a> · <a href="https://open.kakao.com/o/ghZQNlXi">카카오 오픈채팅</a> · <a href="https://github.com/RAONDH/easydeck/issues">GitHub 의견 게시판</a> · <a href="https://github.com/RAONDH/easydeck">소스 코드</a></p>
     <p class="org">한국AI목회연구소</p>
   </footer>
 </div>
@@ -262,7 +262,7 @@
   };
 
   // 최신 버전 정보 — 실패해도 위 고정 링크는 그대로 동작
-  fetch('https://api.github.com/repos/raon-easypaster/easydeck/releases/latest')
+  fetch('https://api.github.com/repos/RAONDH/easydeck/releases/latest')
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(rel => {
       const size = n => n < 1048576 ? Math.max(1, Math.round(n / 1024)) + 'KB' : Math.round(n / 1048576) + 'MB';
